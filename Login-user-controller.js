@@ -2,9 +2,9 @@
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-//const createJsonError = require("../../errors/create-json-error")
-//const throwJsonError = require("../../errors/throw-json-error");
-//const { findUserByEmail } = require("../../repositories/users-repository");//
+const createJsonError = require("../../Errors.js/Create-json-error");
+const throwJsonError = require("../../Errors.js/Throw-json-error");
+const { findUserByEmail } = require("../../Repositories.js/users-repository");
 const schema = Joi.object().keys({
   username: Joi.string().email().required(),
   password: Joi.string().min(4).max(20).required(),
@@ -13,13 +13,10 @@ const schema = Joi.object().keys({
 async function loginUser(req, res) {
   try {
     const { body } = req;
-    //Validamos el body con Joi
     await schema.validateAsync(body);
 
     const { username, password } = body;
-    // Intentamos obtener usuario para ese email desde el repository
     const user = await findUserByEmail(username);
-    // Validar que existe
     if (!user) {
       throwJsonError(403, "No existe un usuario con ese email y/o password");
     }
@@ -28,9 +25,8 @@ async function loginUser(req, res) {
     if (!isValidPassword) {
       throwJsonError(403, "No existe un usuario con ese email y/o password");
     }
-    // Comprbamos que el usuario esta verificado
+
     if (!verifiedAt) {
-      // Enviar un email.
       throwJsonError(
         401,
         "Verifique su cuenta para poder acceder a nuestros servicios."

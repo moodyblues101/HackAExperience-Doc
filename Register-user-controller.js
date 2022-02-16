@@ -1,15 +1,15 @@
-'use strict';
-const Joi = require('joi');
-const bcrypt = require('bcryptjs');
-const randomstring = require('randomstring');
+"use strict";
+const Joi = require("joi");
+const bcrypt = require("bcryptjs");
+const randomstring = require("randomstring");
 
-//const createJsonError = require('../../errors/create-json-error');
-//const throwJsonError = require('../../errors/throw-json-error.js');
-//const {
+const createJsonError = require("../../errors/create-json-error");
+const throwJsonError = require("../../errors/throw-json-error.js");
+const {
   createUser,
   findUserByEmail,
-} = require('../../repositories/users-repository');
-const { sendMailRegister } = require('../../helpers/mail-smtp');//
+} = require("../../repositories/users-repository");
+const { sendMailRegister } = require("../../helpers/mail-smtp"); //
 
 const { HTTP_SERVER_DOMAIN } = process.env;
 
@@ -17,7 +17,7 @@ const schema = Joi.object().keys({
   name: Joi.string().min(4).max(120).required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(4).max(20).required(),
-  verifyPassword: Joi.ref('password'),
+  verifyPassword: Joi.ref("password"),
 });
 
 async function registerUser(req, res) {
@@ -31,7 +31,7 @@ async function registerUser(req, res) {
       // error.status = 400; //409 - Conflict
       // throw error;
       // Este codigo de arriba se reemplaza por una funcion
-      throwJsonError(409, 'Ya existe un usuario con ese email');
+      throwJsonError(409, "Ya existe un usuario con ese email");
     }
     // Crear el Hash el password
     const passwordHash = await bcrypt.hash(password, 12);
